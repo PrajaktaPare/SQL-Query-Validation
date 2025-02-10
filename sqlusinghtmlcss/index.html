@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Validator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/themes/prism-tomorrow.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </nav>
+        <main>
+            <h1>SQL Validator</h1>
+            <div class="card">
+                <textarea id="sqlInput" placeholder="Enter your SQL query here..." rows="8"></textarea>
+                <div class="button-group">
+                    <button id="validateBtn" class="primary-button">Validate SQL</button>
+                    <button id="copyBtn" class="secondary-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Copy to Clipboard
+                    </button>
+                </div>
+                <div id="validationResult" class="alert hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="alert-icon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <div>
+                        <h4 class="alert-title">Valid SQL</h4>
+                        <p class="alert-description">Your SQL query is valid.</p>
+                    </div>
+                </div>
+                <pre><code id="highlightedSQL" class="language-sql"></code></pre>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/components/prism-sql.min.js"></script>
+    <script>
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const validateBtn = document.getElementById('validateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const sqlInput = document.getElementById('sqlInput');
+        const validationResult = document.getElementById('validationResult');
+        const highlightedSQL = document.getElementById('highlightedSQL');
+
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        validateBtn.addEventListener('click', () => {
+            const sql = sqlInput.value.trim().toLowerCase();
+            const isValid = sql.includes('select') && sql.includes('from');
+            validationResult.classList.remove('hidden', 'success', 'error');
+            validationResult.classList.add(isValid ? 'success' : 'error');
+            validationResult.querySelector('.alert-title').textContent = isValid ? 'Valid SQL' : 'Invalid SQL';
+            validationResult.querySelector('.alert-description').textContent = isValid
+                ? 'Your SQL query is valid.'
+                : 'Your SQL query is invalid. Make sure it includes SELECT and FROM clauses.';
+            highlightedSQL.textContent = sqlInput.value;
+            Prism.highlightElement(highlightedSQL);
+        });
+
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(sqlInput.value).then(() => {
+                alert('SQL copied to clipboard!');
+            });
+        });
+    </script>
+</body>
+</html>
